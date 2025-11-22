@@ -1,0 +1,56 @@
+#include "SFMLApplication.h"
+#include <iostream>
+#include <filesystem>
+
+#include <SFML/Graphics.hpp>
+
+namespace gel
+{
+	void SFMLApplication::Run(int windowWidth, int windowHeight, const std::string& title)
+	{
+        //Open the window
+		sf::Vector2u windowSize(windowWidth, windowHeight);
+		sf::VideoMode videoMode(windowSize);
+        //auto window = sf::RenderWindow(videoMode, title.c_str());
+        auto window = sf::RenderWindow(videoMode, title.c_str(), sf::State::Fullscreen);
+        //Stabilize fps
+        window.setVerticalSyncEnabled(true);
+
+        // Initialisation logic
+		Init(window);
+
+        //Create a clock to get deltaTime
+        sf::Clock clock;
+        //Main game loop
+        while (window.isOpen())
+        {
+            //get deltaTime
+            float dt = clock.restart().asSeconds();
+
+            // Process events
+            while (const std::optional event = window.pollEvent())
+            {
+                //If window is closed, then close the game
+                if (event->is<sf::Event::Closed>())
+                    window.close();
+
+                // Event handling code here
+                HandleEvent(event);
+            }
+
+            // Update logic
+            Update(dt);
+
+            // Clear window
+            window.clear();
+
+            //Draw to the window
+            Render(window);
+
+            //Display image from the double buffer
+            window.display();
+        }
+	}
+
+
+}
